@@ -1,30 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
-using SimpleApi.Models;
-using System.Collections.Generic;
-using System.Linq;
+@model List<SimpleApi.Models.Producto>
 
-namespace SimpleApi.Controllers
-{
-    public class ProductoController : Controller
-    {
-        private static List<Producto> productos = new List<Producto>
-        {
-            new Producto { Id = 1, Nombre = "Teclado", Precio = 30.5m },
-            new Producto { Id = 2, Nombre = "Monitor", Precio = 250m }
-        };
-
-        // Vista Razor: /producto
-        [HttpGet("/producto")]
-        public IActionResult Index()
-        {
-            return View(productos); // <-- Pasa los productos a la vista
-        }
-
-        // API REST: /api/producto
-        [HttpGet("api/producto")]
-        public IActionResult GetProductos()
-        {
-            return Ok(productos);
-        }
-    }
+@{
+    ViewData["Title"] = "Lista de Productos";
 }
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var producto in Model)
+        {
+            <tr>
+                <td>@producto.Id</td>
+                <td>@producto.Nombre</td>
+                <td>@producto.Precio.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
