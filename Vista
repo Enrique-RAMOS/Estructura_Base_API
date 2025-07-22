@@ -1,0 +1,30 @@
+using Microsoft.AspNetCore.Mvc;
+using SimpleApi.Models;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SimpleApi.Controllers
+{
+    public class ProductoController : Controller
+    {
+        private static List<Producto> productos = new List<Producto>
+        {
+            new Producto { Id = 1, Nombre = "Teclado", Precio = 30.5m },
+            new Producto { Id = 2, Nombre = "Monitor", Precio = 250m }
+        };
+
+        // Vista Razor: /producto
+        [HttpGet("/producto")]
+        public IActionResult Index()
+        {
+            return View(productos); // <-- Pasa los productos a la vista
+        }
+
+        // API REST: /api/producto
+        [HttpGet("api/producto")]
+        public IActionResult GetProductos()
+        {
+            return Ok(productos);
+        }
+    }
+}
