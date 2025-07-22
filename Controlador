@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace SimpleApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class ProductoController : Controller
     {
         private static List<Producto> productos = new List<Producto>
@@ -15,52 +13,18 @@ namespace SimpleApi.Controllers
             new Producto { Id = 2, Nombre = "Monitor", Precio = 250m }
         };
 
-        // GET: api/producto
-        [HttpGet]
-        public ActionResult<IEnumerable<Producto>> Get()
+        // Vista Razor: /producto
+        [HttpGet("/producto")]
+        public IActionResult Index()
+        {
+            return View(productos); // <-- Pasa los productos a la vista
+        }
+
+        // API REST: /api/producto
+        [HttpGet("api/producto")]
+        public IActionResult GetProductos()
         {
             return Ok(productos);
-        }
-
-        // GET: api/producto/1
-        [HttpGet("{id}")]
-        public ActionResult<Producto> Get(int id)
-        {
-            var producto = productos.FirstOrDefault(p => p.Id == id);
-            if (producto == null) return NotFound();
-            return Ok(producto);
-        }
-
-        // POST: api/producto
-        [HttpPost]
-        public ActionResult<Producto> Post([FromBody] Producto producto)
-        {
-            producto.Id = productos.Max(p => p.Id) + 1;
-            productos.Add(producto);
-            return CreatedAtAction(nameof(Get), new { id = producto.Id }, producto);
-        }
-
-        // PUT: api/producto/1
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Producto productoActualizado)
-        {
-            var producto = productos.FirstOrDefault(p => p.Id == id);
-            if (producto == null) return NotFound();
-
-            producto.Nombre = productoActualizado.Nombre;
-            producto.Precio = productoActualizado.Precio;
-            return NoContent();
-        }
-
-        // DELETE: api/producto/1
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var producto = productos.FirstOrDefault(p => p.Id == id);
-            if (producto == null) return NotFound();
-
-            productos.Remove(producto);
-            return NoContent();
         }
     }
 }
