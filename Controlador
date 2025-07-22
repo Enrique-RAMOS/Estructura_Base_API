@@ -7,24 +7,84 @@ namespace SimpleApi.Controllers
 {
     public class ProductoController : Controller
     {
+        // Lista en memoria (simula una base de datos)
         private static List<Producto> productos = new List<Producto>
         {
             new Producto { Id = 1, Nombre = "Teclado", Precio = 30.5m },
             new Producto { Id = 2, Nombre = "Monitor", Precio = 250m }
         };
 
-        // Vista Razor: /producto
-        [HttpGet("/producto")]
+        // GET: /producto
         public IActionResult Index()
         {
-            return View(productos); // <-- Pasa los productos a la vista
+            return View(productos);
         }
 
-        // API REST: /api/producto
-        [HttpGet("api/producto")]
-        public IActionResult GetProductos()
+        // GET: /producto/create
+        public IActionResult Create()
         {
-            return Ok(productos);
+            return View();
+        }
+
+        // POST: /producto/create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Producto producto)
+        {
+            if (ModelState.IsValid)
+            {
+                producto.Id = productos.Max(p => p.Id) + 1;
+                productos.Add(producto);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(producto);
+        }
+
+        // GET: /producto/edit/1
+        public IActionResult Edit(int id)
+        {
+            var producto = productos.FirstOrDefault(p => p.Id == id);
+            if (producto == null) return NotFound();
+
+            return View(producto);
+        }
+
+        // POST: /producto/edit/1
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Producto productoActualizado)
+        {
+            var producto = productos.FirstOrDefault(p => p.Id == id);
+            if (producto == null) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                producto.Nombre = productoActualizado.Nombre;
+                producto.Precio = productoActualizado.Precio;
+                return RedirectToAction(nameof(Index));
+            }
+            return View(productoActualizado);
+        }
+
+        // GET: /producto/delete/1
+        public IActionResult Delete(int id)
+        {
+            var producto = productos.FirstOrDefault(p => p.Id == id);
+            if (producto == null) return NotFound();
+
+            return View(producto);
+        }
+
+        // POST: /producto/delete/1
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var producto = productos.FirstOrDefault(p => p.Id == id);
+            if (producto == null) return NotFound();
+
+            productos.Remove(producto);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
